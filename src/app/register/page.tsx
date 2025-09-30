@@ -1,29 +1,24 @@
-'use client'
+"use client";
+import { z } from "zod";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from 'zod';
+import { formSchema } from "../../lib/validations/form";
 
-const formSchema = z.object({
-    userName: z.string().min(2, "min 2 characters"),
-    email: z.string().min(1,'Email is required').email('email invalido'),
-    password: z.string().min(6, 'the password must have min 6 characters'),
-})
 
-type FormData = z.infer<typeof formSchema>
 
+type FormData = z.infer<typeof formSchema>;
 
 export default function RegisterPage() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({ resolver: zodResolver(formSchema) });
 
-    const {
-        register,
-        handleSubmit,
-        formState: {errors},
-    } = useForm<FormData>({ resolver: zodResolver(formSchema)});
-
-    const onSubmit = (data: FormData) => {
-        console.log(`data form:`, data);
-    }
+  const onSubmit = (data: FormData) => {
+    console.log(`data form:`, data);
+  };
 
   return (
     <div className="max-w-md mx-auto p-6">
@@ -31,20 +26,21 @@ export default function RegisterPage() {
 
       {/* 4. handleSubmit envuelve nuestra función onSubmit */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        
         <div>
-            <label htmlFor="userName" className="block text-sm font-medium mb-1">
+          <label htmlFor="userName" className="block text-sm font-medium mb-1">
             userName
-            </label>
-            <input 
-                type="text" 
-                id="userName"
-                {...register('userName')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.userName?.message}</p>
-            )}
+          </label>
+          <input
+            type="text"
+            id="userName"
+            {...register("userName")}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {errors.email && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.userName?.message}
+            </p>
+          )}
         </div>
 
         {/* Email Input */}
@@ -55,7 +51,7 @@ export default function RegisterPage() {
           <input
             id="email"
             type="email"
-            {...register('email')}
+            {...register("email")}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {/* Mostramos el error si existe */}
@@ -72,11 +68,13 @@ export default function RegisterPage() {
           <input
             id="password"
             type="password"
-            {...register('password')}
+            {...register("password")}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {errors.password && (
-            <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+            <p className="text-red-500 text-sm mt-1">
+              {errors.password.message}
+            </p>
           )}
         </div>
 
@@ -89,5 +87,5 @@ export default function RegisterPage() {
         </button>
       </form>
     </div>
-  )
+  );
 }

@@ -1,13 +1,16 @@
 'use client'
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { z } from 'zod';
 
+const formSchema = z.object({
+    userName: z.string().min(2, "min 2 characters"),
+    email: z.string().min(1,'Email is required').email('email invalido'),
+    password: z.string().min(6, 'the password must have min 6 characters'),
+})
 
-type FormData = {
-    email: string;
-    password: string;
-    userName : string
-}
+type FormData = z.infer<typeof formSchema>
 
 
 export default function RegisterPage() {
@@ -16,7 +19,7 @@ export default function RegisterPage() {
         register,
         handleSubmit,
         formState: {errors},
-    } = useForm<FormData>();
+    } = useForm<FormData>({ resolver: zodResolver(formSchema)});
 
     const onSubmit = (data: FormData) => {
         console.log(`data form:`, data);
@@ -36,9 +39,7 @@ export default function RegisterPage() {
             <input 
                 type="text" 
                 id="userName"
-                {...register('userName', {
-                    required: 'user name is required'
-                })}
+                {...register('userName')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.email && (
@@ -54,13 +55,7 @@ export default function RegisterPage() {
           <input
             id="email"
             type="email"
-            {...register('email', { 
-              required: 'El email es requerido',
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: 'Email inválido'
-              }
-            })}
+            {...register('email')}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {/* Mostramos el error si existe */}
@@ -77,13 +72,7 @@ export default function RegisterPage() {
           <input
             id="password"
             type="password"
-            {...register('password', { 
-              required: 'La contraseña es requerida',
-              minLength: {
-                value: 6,
-                message: 'Mínimo 6 caracteres'
-              }
-            })}
+            {...register('password')}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {errors.password && (

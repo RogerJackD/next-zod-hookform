@@ -1,34 +1,34 @@
 import { useState } from "react";
 import { CreateUserDto, User } from "../types/user";
 import { userService } from "../service/userService";
+import { useToast } from "./useToast";
 
 
 export const useCreateUser = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+
+    const toast = useToast();
 
     const createUser = async ( userData : CreateUserDto): Promise<User | null> => {
         setIsLoading(true);
-        setError(null);
 
         try {
             const newUser = await userService.createUser(userData);
+            
+            toast.success('usuario creado correctamente')
+
             return newUser;
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : "Error desconocido"
-            setError(errorMessage);
+            toast.error(errorMessage);
             return null
         } finally {
             setIsLoading(false);
         }
     };
 
-    const resetError = () => setError(null);
-
     return {
         createUser,
         isLoading,
-        error,
-        resetError,
     }
 }

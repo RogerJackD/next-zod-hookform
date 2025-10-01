@@ -1,9 +1,9 @@
 export interface CreateUserDto {
     name: string;
-    lastName: string;
+    lastName?: string;
     email: string;
     phone: string;
-    address: string;
+    address?: string;
 }
 
 export interface User {
